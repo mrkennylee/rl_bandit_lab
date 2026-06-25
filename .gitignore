@@ -1,0 +1,18 @@
+# venv
+rl_bandit_lab_env/
+# project-local postgres data dir (persists on disk, not in git)
+.pgdata/
+# logs (system + .mdc) persist on disk, not in git
+logs/
+# python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.ruff_cache/
+# node (katex validation tooling)
+node_modules/
+# macOS
+.DS_Store
+# env
+.env

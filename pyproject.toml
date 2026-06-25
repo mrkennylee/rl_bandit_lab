@@ -1,0 +1,50 @@
+[project]
+name = "rl_bandit_lab"
+version = "0.0.1"
+description = "Educational RL simulator: Multi-Armed Bandit + Gridworld MDP / Bellman, taught live in the browser."
+requires-python = ">=3.12,<3.13"
+dependencies = [
+  "fastapi>=0.115",
+  "uvicorn[standard]>=0.30",
+  "jinja2>=3.1",
+  "sse-starlette>=2.1",
+  "sqlalchemy[asyncio]>=2.0",
+  "greenlet>=3.0",
+  "alembic>=1.13",
+  "psycopg[binary]>=3.2",
+  "pydantic-settings>=2.4",
+  "numpy>=2.0",
+  "pyyaml>=6.0",
+]
+
+[project.optional-dependencies]
+dev = [
+  "pytest>=8.0",
+  "pytest-asyncio>=0.23",
+  "httpx>=0.27",
+  "pytest-postgresql>=6.0",
+  "ruff>=0.6",
+]
+e2e = [
+  "playwright>=1.40",  # browser screenshots / visual checks; run `playwright install chromium`
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/rl_bandit_lab"]
+
+[tool.pytest.ini_options]
+pythonpath = ["src"]
+testpaths = ["tests"]
+asyncio_mode = "auto"
+markers = [
+  "integration: requires a live/ephemeral postgres backend (skipped if unavailable)",
+  "e2e: full browser end-to-end via Playwright (opt-in with RUN_E2E=1)",
+]
+
+[tool.ruff]
+line-length = 100
+src = ["src", "tests"]

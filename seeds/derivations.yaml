@@ -1,0 +1,82 @@
+# Formula derivations rendered by KaTeX. Single-quoted scalars => backslashes are
+# literal (no double-escaping). Every `latex` here is validated by scripts/
+# validate_katex.mjs BEFORE it is seeded into the database (resolution #4 / #6).
+
+formulas:
+  - key: bandit.value_update
+    title: 'Action-Value Update (Incremental Sample Average)'
+    latex: 'Q_{n+1}(a) = Q_n(a) + \frac{1}{N(a)}\left[R_n - Q_n(a)\right]'
+    plain_explain: >
+      Each arm keeps a running estimate Q(a) of its mean reward. After pulling arm
+      a and seeing reward R, we nudge Q(a) toward R by 1/N(a) — the more we have
+      pulled it, the smaller the correction.
+    steps:
+      - latex: 'Q_n(a) = \frac{1}{n}\sum_{i=1}^{n} R_i'
+        note: 'Definition: the estimate is the average of the n rewards seen so far.'
+      - latex: 'Q_{n+1}(a) = \frac{1}{n}\sum_{i=1}^{n+1} R_i = \frac{1}{n+1}\left(R_{n+1} + \sum_{i=1}^{n} R_i\right)'
+        note: 'Add the new reward and split the sum.'
+      - latex: 'Q_{n+1}(a) = \frac{1}{n+1}\left(R_{n+1} + n\,Q_n(a)\right)'
+        note: 'Substitute the running sum n·Q_n(a).'
+      - latex: 'Q_{n+1}(a) = Q_n(a) + \frac{1}{n+1}\left[R_{n+1} - Q_n(a)\right]'
+        note: 'Rearrange into the incremental update (with N(a)=n+1).'
+
+  - key: bandit.ucb
+    title: 'Upper Confidence Bound (UCB1)'
+    latex: 'a_t = \arg\max_a \left[ Q(a) + c\sqrt{\frac{\ln t}{N(a)}} \right]'
+    plain_explain: >
+      UCB1 picks the arm with the highest optimistic estimate: its value Q(a) plus
+      an exploration bonus that grows when an arm has been tried rarely (small N(a))
+      and shrinks as we gather evidence. Untried arms have an infinite bonus.
+    steps:
+      - latex: 'Q(a) + c\sqrt{\frac{\ln t}{N(a)}}'
+        note: 'Value estimate plus an exploration bonus (uncertainty) per arm.'
+      - latex: 'N(a) \to \infty \implies c\sqrt{\frac{\ln t}{N(a)}} \to 0'
+        note: 'As an arm is pulled more, its bonus vanishes — pure exploitation.'
+      - latex: 'a_t = \arg\max_a \left[ Q(a) + c\sqrt{\frac{\ln t}{N(a)}} \right]'
+        note: 'Choose the arm maximising the optimistic value.'
+
+  - key: bandit.thompson
+    title: 'Thompson Sampling (Beta-Bernoulli)'
+    latex: '\theta_a \sim \mathrm{Beta}(\alpha_a, \beta_a), \quad a_t = \arg\max_a \theta_a'
+    plain_explain: >
+      With Bernoulli (0/1) rewards, each arm keeps a Beta posterior over its success
+      probability. We sample one draw per arm and play the arm with the largest
+      sample — naturally balancing exploration and exploitation.
+    steps:
+      - latex: '\theta_a \sim \mathrm{Beta}(\alpha_a, \beta_a)'
+        note: 'Sample a plausible success probability for each arm from its posterior.'
+      - latex: 'a_t = \arg\max_a \theta_a'
+        note: 'Play the arm with the highest sampled probability.'
+      - latex: '\alpha_a \leftarrow \alpha_a + R, \quad \beta_a \leftarrow \beta_a + (1 - R)'
+        note: 'Bernoulli update: a success raises alpha, a failure raises beta.'
+
+  - key: bellman.optimality
+    title: 'Bellman Optimality Equation'
+    latex: 'V^*(s) = \max_a \sum_{s''} P(s'' \mid s,a)\left[R(s,a,s'') + \gamma\, V^*(s'')\right]'
+    plain_explain: >
+      The optimal value of a state is the best achievable expected return: pick the
+      action that maximises the immediate reward plus the discounted optimal value
+      of where you land. Value iteration applies this as an update until V converges.
+    steps:
+      - latex: 'G_t = R_{t+1} + \gamma R_{t+2} + \gamma^2 R_{t+3} + \cdots'
+        note: 'Return: discounted sum of future rewards.'
+      - latex: 'V^\pi(s) = \mathbb{E}_\pi\left[G_t \mid S_t = s\right]'
+        note: 'A state value is the expected return under a policy.'
+      - latex: 'V^*(s) = \max_a \sum_{s''} P(s'' \mid s,a)\left[R(s,a,s'') + \gamma\, V^*(s'')\right]'
+        note: 'Optimality: maximise over actions; recurse on the next state value.'
+
+  - key: bridge.bandit_is_mdp
+    title: 'A Bandit is a One-State MDP'
+    latex: '|S| = 1,\ \gamma = 0 \;\Rightarrow\; V^*(s_0) = \max_a \mathbb{E}[R \mid a]'
+    plain_explain: >
+      A multi-armed bandit is the special case of an MDP with a single state and no
+      discounting. The Bellman optimality equation then collapses to "pick the arm
+      with the highest expected reward" — exactly what the action-value update
+      estimates.
+    steps:
+      - latex: 'V^*(s) = \max_a \sum_{s''} P(s'' \mid s,a)\left[R(s,a,s'') + \gamma\, V^*(s'')\right]'
+        note: 'Start from the full Bellman optimality equation.'
+      - latex: '|S| = 1 \implies s'' = s_0, \quad \gamma = 0'
+        note: 'One state means you always return to it; no discounting of a future.'
+      - latex: 'V^*(s_0) = \max_a \mathbb{E}[R \mid a] \approx \max_a Q(a)'
+        note: 'It reduces to choosing the arm with the best expected reward.'

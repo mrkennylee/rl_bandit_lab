@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="setup card">
+  <h2>Set up your bandit</h2>
+  <form id="setup-form">
+    <label>Number of slot machines
+      <input type="number" id="n_arms" name="n_arms" min="2" max="10" value="3" required>
+    </label>
+    <label>Algorithm
+      <select id="algorithm" name="algorithm">
+        <option value="ucb1">UCB1 — clearest explore → exploit</option>
+        <option value="epsilon_greedy">ε-greedy</option>
+        <option value="thompson">Thompson Sampling</option>
+      </select>
+    </label>
+    <label>Random seed
+      <input type="number" id="seed" name="seed" value="7">
+    </label>
+    <button type="submit">Start learning →</button>
+  </form>
+  <p class="hint">
+    A multi-armed bandit is a <em>one-state MDP</em>. You'll watch an agent pull
+    levers and learn which machine pays best — and see the maths behind every choice.
+  </p>
+</section>
+<script>
+  document.getElementById('setup-form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const body = {
+      n_arms: +document.getElementById('n_arms').value,
+      algorithm: document.getElementById('algorithm').value,
+      seed: +document.getElementById('seed').value,
+    };
+    const resp = await fetch('/runs/bandit', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body),
+    });
+    const data = await resp.json();
+    window.location = `/lab/${data.run_id}`;
+  });
+</script>
+{% endblock %}

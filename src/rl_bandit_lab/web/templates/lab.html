@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="lab"
+         data-run-id="{{ run_id }}"
+         data-n-arms="{{ n_arms }}"
+         data-algorithm="{{ algorithm }}">
+
+  <div class="controls card">
+    <button id="play">▶ Auto-play</button>
+    <button id="pause" disabled>⏸ Pause</button>
+    <button id="step">Step ⏭</button>
+    <label class="speed">Speed
+      <input type="range" id="speed" min="1" max="20" value="4">
+      <span id="speed-label">4 / s</span>
+    </label>
+    <span class="status">Step <b id="step-no">0</b> · <span id="algo-name">{{ algorithm }}</span></span>
+    <a class="restart" href="/">↺ New bandit</a>
+  </div>
+
+  <div class="machines" id="machines">
+    {% for i in range(n_arms) %}
+    <div class="machine" data-arm="{{ i }}" id="machine-{{ i }}">
+      <div class="reel">❓</div>
+      <div class="lever"><span class="knob"></span></div>
+      <div class="label">Machine {{ i }}</div>
+      <div class="qbar"><div class="qfill"></div></div>
+      <div class="qval">Q=0.00 · n=0</div>
+    </div>
+    {% endfor %}
+  </div>
+
+  <div class="panels">
+    <div class="why card">
+      <h3>Why this machine?</h3>
+      <div id="why-text" class="why-text">Press <b>Auto-play</b> or <b>Step</b> to begin.</div>
+      <table id="why-table">
+        <thead><tr><th>Machine</th><th>Decision score</th></tr></thead>
+        <tbody></tbody>
+      </table>
+    </div>
+
+    <div class="formula card">
+      <h3 id="formula-title">The maths</h3>
+      <div id="formula-main" class="formula-main"></div>
+      <p id="formula-explain" class="muted"></p>
+      <details>
+        <summary>Show step-by-step derivation</summary>
+        <div id="formula-steps"></div>
+      </details>
+    </div>
+  </div>
+</section>
+{% endblock %}
+{% block scripts %}
+<script src="/static/app.js"></script>
+{% endblock %}

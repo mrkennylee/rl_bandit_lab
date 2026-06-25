@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}rl_bandit_lab{% endblock %}</title>
+  <link rel="stylesheet"
+        href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css"
+        crossorigin="anonymous">
+  <link rel="stylesheet" href="/static/app.css">
+</head>
+<body>
+  <header>
+    <h1>🎰 rl_bandit_lab</h1>
+    <p class="tagline">Watch reinforcement learning happen — one lever pull at a time.</p>
+    <nav class="nav">
+      <a href="/">🎰 Bandit Lab</a>
+      <a href="/gridworld">🗺️ Gridworld MDP</a>
+      <a href="/bridge">🔗 The Bridge</a>
+    </nav>
+  </header>
+  <main>{% block content %}{% endblock %}</main>
+  <script src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"
+          crossorigin="anonymous"></script>
+  <script>
+    // Presence channel: hold an SSE connection while this page is open. When the
+    // last tab closes, the server shuts itself down — and the local database —
+    // after a short grace, so nothing keeps running on your machine.
+    (() => { try { new EventSource("/presence"); } catch (e) { /* no-op */ } })();
+  </script>
+  {% block scripts %}{% endblock %}
+</body>
+</html>

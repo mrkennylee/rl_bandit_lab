@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="bridge">
+  <div class="card">
+    <h2>🔗 A bandit is a one-state MDP</h2>
+    <p>
+      The two labs teach the same idea at different scales. A <b>Gridworld</b> is a
+      full Markov Decision Process — many states, stochastic transitions, and the
+      Bellman optimality equation. A <b>multi-armed bandit</b> is the special case
+      with a <em>single state</em> and no discounting (γ = 0), so the Bellman
+      equation collapses into the action-value update the bandit was learning.
+    </p>
+  </div>
+
+  <div class="panels">
+    <div class="card">
+      <h3>① Full MDP — Bellman optimality</h3>
+      <div id="f-bellman" class="formula-main"></div>
+      <p id="e-bellman" class="muted"></p>
+    </div>
+    <div class="card">
+      <h3>② Collapse: |S| = 1, γ = 0</h3>
+      <div id="f-bridge" class="formula-main"></div>
+      <p id="e-bridge" class="muted"></p>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>③ What the bandit estimates</h3>
+    <div id="f-value" class="formula-main"></div>
+    <p id="e-value" class="muted"></p>
+  </div>
+</section>
+{% endblock %}
+{% block scripts %}
+<script>
+  async function loadFormula(key, mathId, explainId) {
+    const resp = await fetch(`/formula/${key}`);
+    if (!resp.ok) return;
+    const data = await resp.json();
+    katex.render(data.latex, document.getElementById(mathId), { displayMode: true, throwOnError: false });
+    document.getElementById(explainId).textContent = data.plain_explain || "";
+  }
+  loadFormula("bellman.optimality", "f-bellman", "e-bellman");
+  loadFormula("bridge.bandit_is_mdp", "f-bridge", "e-bridge");
+  loadFormula("bandit.value_update", "f-value", "e-value");
+</script>
+{% endblock %}

@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="gridworld">
+  <div class="controls card">
+    <button id="sweep">Sweep ⏭</button>
+    <button id="play">▶ Auto-sweep</button>
+    <button id="pause" disabled>⏸ Pause</button>
+    <label class="speed">Speed
+      <input type="range" id="speed" min="1" max="20" value="6">
+      <span id="speed-label">6 / s</span>
+    </label>
+    <span class="status">
+      Sweep <b id="sweep-no">0</b> · Bellman residual Δ=<b id="delta">—</b>
+      <span id="conv" class="badge">iterating</span>
+    </span>
+    <button id="restart" class="restart">↺ New run</button>
+  </div>
+
+  <div class="grid-wrap"><div class="grid" id="grid"></div></div>
+
+  <div class="panels">
+    <div class="why card">
+      <h3>What's happening?</h3>
+      <p class="muted">
+        Each <b>sweep</b> applies the Bellman optimality update to every state: a
+        cell's value becomes the best (over the four actions) expected reward plus
+        discounted next-state value. Arrows show the current greedy policy. Watch
+        value propagate out from the +1 goal until the residual Δ converges to ~0.
+      </p>
+      <p class="muted">Legend: 🟩 high value · 🟥 low / negative · arrows = best action · ▩ wall.</p>
+    </div>
+
+    <div class="formula card">
+      <h3 id="formula-title">The maths</h3>
+      <div id="formula-main" class="formula-main"></div>
+      <p id="formula-explain" class="muted"></p>
+      <details>
+        <summary>Show step-by-step derivation</summary>
+        <div id="formula-steps"></div>
+      </details>
+    </div>
+  </div>
+</section>
+{% endblock %}
+{% block scripts %}
+<script src="/static/app_gridworld.js"></script>
+{% endblock %}
