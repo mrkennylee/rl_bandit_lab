@@ -21,6 +21,7 @@ dependencies = [
 dev = [
   "pytest>=8.0",
   "pytest-asyncio>=0.23",
+  "pytest-cov>=5.0",
   "httpx>=0.27",
   "pytest-postgresql>=6.0",
   "ruff>=0.6",
@@ -44,6 +45,10 @@ markers = [
   "integration: requires a live/ephemeral postgres backend (skipped if unavailable)",
   "e2e: full browser end-to-end via Playwright (opt-in with RUN_E2E=1)",
 ]
+
+[tool.coverage.run]
+source = ["src/rl_bandit_lab"]
+branch = true
 
 [tool.ruff]
 line-length = 100
