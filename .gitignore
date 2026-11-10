@@ -10,6 +10,7 @@ __pycache__/
 *.egg-info/
 .pytest_cache/
 .ruff_cache/
+.coverage
 # node (katex validation tooling)
 node_modules/
 # macOS

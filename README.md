@@ -68,6 +68,17 @@ python -m rl_bandit_lab.db.seed                 # KaTeX-validate then seed deriv
 python -m uvicorn rl_bandit_lab.web.app:app     # run
 ```
 
+## Check command
+
+```bash
+make check
+```
+
+Exit code 0 means every test passed (unit + integration against an ephemeral
+PostgreSQL + KaTeX seed checks; the opt-in browser e2e test is the only skip),
+and the run prints the test count, run time, and a line-and-branch coverage report.
+It installs the venv/deps on first run and needs `uv`, Node, and `postgresql@16`.
+
 ## Architecture
 
 ```

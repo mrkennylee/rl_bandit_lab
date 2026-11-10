@@ -4,7 +4,7 @@ RUFF = rl_bandit_lab_env/bin/ruff
 HOST ?= 127.0.0.1
 PORT ?= 8080
 
-.PHONY: install db migrate seed setup run dev stop test lint e2e db-stop clean
+.PHONY: install db migrate seed setup run dev stop test check lint e2e db-stop clean
 
 install:
 	uv venv rl_bandit_lab_env --python 3.12
@@ -39,6 +39,23 @@ stop:
 
 test:
 	$(PY) -m pytest -q
+
+# check: the project's one check command (see README "Check command").
+# Installs deps if the venv is missing or requirements changed, refuses to run
+# without postgres/node (so integration + KaTeX tests can't silently skip), then
+# runs the full suite with a coverage report. Exit 0 only if every test passes.
+DEPS_STAMP = rl_bandit_lab_env/.deps-stamp
+
+$(DEPS_STAMP): requirements.txt package-lock.json
+	test -x $(PY) || uv venv rl_bandit_lab_env --python 3.12
+	uv pip install --python $(PY) -r requirements.txt
+	npm install
+	touch $@
+
+check: $(DEPS_STAMP)
+	@PYTHONPATH=src $(PY) -c "import sys; from rl_bandit_lab.db.local_pg import postgres_bin_dir; sys.exit(0 if postgres_bin_dir() else 'check: postgres binaries not found (brew install postgresql@16)')"
+	@command -v node >/dev/null || { echo "check: node not found (needed for KaTeX seed tests)"; exit 1; }
+	$(PY) -m pytest -q -rs --cov --cov-report=term
 
 lint:
 	$(RUFF) check src tests
